@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Treino">
+<title>Treino de Hipertrofia</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#18212b;--muted:#667085;--line:#dfe5ec;--blue:#2563eb;--blue2:#eef4ff;--ok:#eaf7ee;--oktext:#176b38;--amber:#8a5a00;--amber-bg:#fff7e6;--amber-line:#ffe1a8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.35}
+header{background:var(--blue);color:#fff;padding:20px 16px 16px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+header h1{font-size:22px;margin:0 0 4px}header p{font-size:13px;margin:0;opacity:.9}
+.tabs{display:flex;gap:7px;overflow-x:auto;padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:76px;z-index:9}
+.tab{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:999px;padding:8px 12px;font-size:13px;white-space:nowrap}.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+main{max-width:760px;margin:0 auto;padding:14px 12px 34px}.day-head{display:flex;justify-content:space-between;gap:10px;align-items:end;margin-bottom:12px}.day-head h2{font-size:24px;margin:0}.day-head .day{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.08em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:10px 0;overflow:hidden;box-shadow:0 2px 8px rgba(20,30,50,.04)}
+.card h3{margin:0;padding:12px 14px;background:var(--blue2);color:var(--blue);font-size:13px;letter-spacing:.05em}
+.exercise{padding:12px 14px;border-top:1px solid var(--line)}.exercise:first-of-type{border-top:0}.ex-title{font-weight:700;font-size:15px}.meta{font-size:12px;color:var(--muted);margin:4px 0 9px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 4px}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 10px;background:#fff;color:var(--text);font-size:15px;outline:none}.field textarea{min-height:42px;resize:vertical}.field input:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.done{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:12px;color:var(--muted)}.done input{width:18px;height:18px}.exercise.complete{background:var(--ok)}.exercise.complete .ex-title{color:var(--oktext)}
+.cardio{background:var(--blue2);border:1px solid #bfd3ff;border-radius:14px;padding:12px 14px;margin:12px 0;font-size:13px}.note{color:var(--muted);font-size:12px;margin:12px 2px}.actions{display:flex;gap:8px;position:sticky;bottom:10px;z-index:8}.btn{flex:1;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:11px 12px;font-weight:700}.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.hidden{display:none}@media(min-width:700px){.tabs{justify-content:center}.grid{grid-template-columns:1fr 1fr 1fr}.actions{max-width:760px;margin:0 auto}}
+/* --- Load history additions --- */
+.prev-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 10px}
+.prev-btn{border:1px solid var(--amber-line);background:var(--amber-bg);color:var(--amber);border-radius:999px;padding:6px 11px;font-size:11px;font-weight:800;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.prev-btn:active{transform:scale(.97)}
+.prev-chip{font-size:12px;color:var(--text)}
+.prev-chip b{color:var(--blue)}
+.prev-chip .pdate{color:var(--muted);font-weight:600}
+.prev-none{font-size:12px;color:var(--muted)}
+.hist{margin:2px 0 10px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.hist-title{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.05em;padding:8px 11px;background:#fafbfd;border-bottom:1px solid var(--line)}
+.hist-item{display:flex;align-items:center;gap:8px;padding:8px 11px;border-top:1px solid var(--line);font-size:13px}
+.hist-item:first-child{border-top:0}
+.hist-item .hdate{font-weight:800;color:var(--muted);min-width:44px}
+.hist-item .hweight{font-weight:800;color:var(--blue)}
+.hist-item .hreps{color:var(--text)}
+.hist-item .hnotes{flex-basis:100%;font-size:11px;color:var(--muted);margin-left:52px}
+.hist-item .hdel{margin-left:auto;border:none;background:none;color:#c0392b;font-size:16px;line-height:1;padding:2px 6px;cursor:pointer;font-weight:700}
+.save-row{display:flex;gap:8px;margin-top:10px}
+.save-btn{flex:1;border:1px solid var(--blue);background:var(--blue);color:#fff;border-radius:10px;padding:10px 12px;font-weight:800;font-size:13px;cursor:pointer}
+.save-btn.saved{background:var(--oktext);border-color:var(--oktext)}
+.datebar{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin:0 0 12px;font-size:13px}
+.datebar label{color:var(--muted);font-weight:700}
+.datebar input{border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:14px;color:var(--text)}
+.footer-tools{display:flex;gap:8px;margin:16px 2px 0;flex-wrap:wrap}
+.tool-btn{flex:1;min-width:120px;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:10px;padding:9px 10px;font-weight:700;font-size:12px;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#18212b;color:#fff;padding:11px 16px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style></head>
+<body>
+<header><h1>Treino de Hipertrofia</h1><p>Segunda a sexta · ~60 min · diário de cargas com histórico por treino</p></header>
+<nav class="tabs" id="tabs"></nav>
+<main id="app"><noscript><p style="padding:16px">Este app precisa de JavaScript ativado. Abra o arquivo em um navegador completo (Safari, Chrome ou Firefox), não dentro de um app de mensagens.</p></noscript></main>
+<div class="toast" id="toast"></div>
+<script>
+// Rede de segurança: se algo falhar, mostra o erro na tela em vez de ficar em branco.
+window.addEventListener('error',function(ev){
+  try{
+    var m=document.getElementById('app');
+    if(m) m.innerHTML='<div style="padding:16px;color:#b42318;font-size:14px">'+
+      '<b>Ocorreu um erro ao carregar.</b><br>Tire um print desta mensagem e me envie:<br><br>'+
+      '<code style="font-size:12px;white-space:pre-wrap;word-break:break-word">'+
+      String(ev.message||ev.error||'erro desconhecido')+'</code></div>';
+  }catch(_){}
+});
+const training =[{"day": "SEGUNDA", "title": "Peito + Tríceps", "cardio": true, "sections": [["PEITO", [["Supino reto com barra", "4 x 6-10", "90-120s"], ["Supino inclinado com halteres", "3 x 8-12", "90s"], ["Crossover", "3 x 10-15", "60-75s"]]], ["TRÍCEPS", [["Tríceps testa", "3 x 8-12", "75-90s"], ["Tríceps na polia com corda", "3 x 10-15", "60-75s"]]]]}, {"day": "TERÇA", "title": "Costas + Bíceps", "cardio": false, "sections": [["COSTAS", [["Puxada alta pronada", "4 x 6-10", "90-120s"], ["Remada curvada ou cavalinho", "3 x 6-10", "90-120s"], ["Remada baixa", "3 x 8-12", "90s"], ["Puxada neutra", "2 x 10-12", "75-90s"]]], ["BÍCEPS", [["Rosca direta com barra W", "3 x 6-10", "75-90s"], ["Rosca inclinada com halteres", "3 x 8-12", "75-90s"]]]]}, {"day": "QUARTA", "title": "Pernas", "cardio": false, "sections": [["PERNAS", [["Agachamento livre", "4 x 6-10", "90-120s"], ["Leg press", "3 x 8-12", "90-120s"], ["Stiff / Romanian deadlift", "3 x 8-12", "90-120s"], ["Afundo", "2 x 10-12", "75-90s"], ["Cadeira flexora", "3 x 10-15", "60-75s"], ["Cadeira extensora", "2 x 10-15", "60-75s"], ["Panturrilha em pé", "3 x 10-15", "60-75s"]]]]}, {"day": "QUINTA", "title": "Ombros + Braços", "cardio": true, "sections": [["OMBROS", [["Desenvolvimento com halteres", "3 x 6-10", "90s"], ["Elevação lateral", "4 x 10-15", "60s"], ["Crucifixo inverso", "3 x 12-15", "60s"]]], ["BÍCEPS", [["Rosca Scott", "3 x 8-12", "75-90s"], ["Rosca martelo", "2 x 10-15", "60-75s"]]], ["TRÍCEPS", [["Tríceps francês", "3 x 8-12", "75-90s"], ["Tríceps na polia", "2 x 10-15", "60-75s"]]]]}, {"day": "SEXTA", "title": "Upper + Pernas", "cardio": true, "sections": [["UPPER", [["Supino inclinado na máquina ou halteres", "3 x 8-12", "90s"], ["Remada baixa", "3 x 8-12", "90s"]]], ["PERNAS", [["Leg press", "3 x 10-15", "90s"], ["Mesa flexora", "3 x 10-15", "60-75s"]]], ["OMBROS + BRAÇOS", [["Elevação lateral", "3 x 12-15", "60s"], ["Rosca alternada", "2 x 10-15", "60-75s"], ["Tríceps na polia com corda", "2 x 10-15", "60-75s"]]]]}];
+
+const storeKey='treino-hipertrofia-fernando-v2';
+const legacyKey='treino-hipertrofia-fernando-v1';
+
+/* state shape:
+   state.ex[key] = { draft:{weight,reps,notes,done}, history:[{date:'YYYY-MM-DD',weight,reps,notes}] }
+*/
+let state = load();
+let active = 0;
+let openHist = {}; // key -> bool (histórico expandido)
+
+const tabs=document.getElementById('tabs');
+const app=document.getElementById('app');
+const toastEl=document.getElementById('toast');
+
+function load(){
+  let s;
+  try{ s = JSON.parse(localStorage.getItem(storeKey)||'null'); }catch(e){ s=null; }
+  if(!s || typeof s!=='object'){ s={ex:{}}; }
+  if(!s.ex) s.ex={};
+  migrateLegacy(s);
+  return s;
+}
+function migrateLegacy(s){
+  if(s._migrated) return;
+  let legacy=null;
+  try{ legacy=JSON.parse(localStorage.getItem(legacyKey)||'null'); }catch(e){}
+  if(legacy && typeof legacy==='object'){
+    training.forEach((d,di)=>{
+      d.sections.forEach((sec,si)=>{
+        sec[1].forEach((ex,ei)=>{
+          const k=key(di,si,ei);
+          const w=legacy[`${di}-${si}-${ei}-weight`];
+          const r=legacy[`${di}-${si}-${ei}-reps`];
+          const n=legacy[`${di}-${si}-${ei}-notes`];
+          const done=legacy[`${di}-${si}-${ei}-done`];
+          if(w||r||n||done){
+            const rec=getRec(s,k);
+            rec.draft={weight:w||'',reps:r||'',notes:n||'',done:!!done};
+          }
+        });
+      });
+    });
+  }
+  s._migrated=true;
+}
+function save(){ try{ localStorage.setItem(storeKey,JSON.stringify(state)); }catch(e){ toast('Não foi possível salvar (armazenamento cheio ou bloqueado).'); } }
+function key(d,s,e){ return `${d}-${s}-${e}`; }
+function getRec(s,k){ if(!s.ex[k]) s.ex[k]={draft:{weight:'',reps:'',notes:'',done:false},history:[]}; if(!s.ex[k].draft) s.ex[k].draft={weight:'',reps:'',notes:'',done:false}; if(!s.ex[k].history) s.ex[k].history=[]; return s.ex[k]; }
+
+function todayISO(){ const d=new Date(); const off=d.getTimezoneOffset(); const local=new Date(d.getTime()-off*60000); return local.toISOString().slice(0,10); }
+function fmtShort(iso){ if(!iso||iso.length<10) return iso||''; return iso.slice(8,10)+'/'+iso.slice(5,7); }
+function fmtWeight(w){ if(w==null) return ''; w=(''+w).trim(); if(w==='') return ''; return /^[\d.,]+$/.test(w) ? w+' kg' : w; }
+
+function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>toastEl.classList.remove('show'),2200); }
+function esc(s){ return (''+(s==null?'':s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// última sessão registrada anterior à data atual do formulário
+function prevSession(rec,exceptDate){
+  const h=(rec.history||[]).slice().sort((a,b)=>a.date<b.date?1:-1);
+  for(const e of h){ if(e.date!==exceptDate) return e; }
+  return null;
+}
+
+function renderTabs(){
+  tabs.innerHTML='';
+  training.forEach((d,i)=>{
+    const b=document.createElement('button');
+    b.className='tab'+(i===active?' active':'');
+    b.textContent=d.day.slice(0,3);
+    b.onclick=()=>{active=i;render();window.scrollTo({top:0})};
+    tabs.appendChild(b);
+  });
+}
+
+function render(){
+  renderTabs();
+  const d=training[active];
+  const today=todayISO();
+  const total=d.sections.reduce((n,s)=>n+s[1].length,0);
+  let html=`<div class="day-head"><div><div class="day">${d.day}</div><h2>${d.title}</h2></div><div class="day">${total} exercícios</div></div>`;
+  html+=`<div class="datebar"><label>Data do treino</label><input type="date" id="dateInput" value="${today}"><span style="color:var(--muted)">as cargas de hoje são salvas nesta data</span></div>`;
+
+  d.sections.forEach((sec,si)=>{
+    html+=`<section class="card"><h3>${esc(sec[0])}</h3>`;
+    sec[1].forEach((ex,ei)=>{
+      const k=key(active,si,ei);
+      const rec=getRec(state,k);
+      const done=!!rec.draft.done;
+      const prev=prevSession(rec,today);
+      const hist=(rec.history||[]).slice().sort((a,b)=>a.date<b.date?1:-1);
+
+      // linha "treino anterior"
+      let prevHtml='';
+      if(prev){
+        prevHtml=`<div class="prev-row">
+          <button class="prev-btn" data-toggle="${k}">📋 TREINO ANTERIOR${hist.length>1?` (${hist.length})`:''}</button>
+          <span class="prev-chip">Última: <b>${esc(fmtWeight(prev.weight))}</b>${prev.reps?` · ${esc(prev.reps)}`:''} <span class="pdate">(${fmtShort(prev.date)})</span></span>
+        </div>`;
+      } else {
+        prevHtml=`<div class="prev-row"><span class="prev-none">Sem treino anterior registrado — este será o primeiro.</span></div>`;
+      }
+
+      // painel de histórico (expandível)
+      let histHtml='';
+      if(openHist[k] && hist.length){
+        histHtml=`<div class="hist"><div class="hist-title">HISTÓRICO DE CARGAS</div>`;
+        hist.forEach(h=>{
+          histHtml+=`<div class="hist-item"><span class="hdate">${fmtShort(h.date)}</span><span class="hweight">${esc(fmtWeight(h.weight))}</span>${h.reps?`<span class="hreps">${esc(h.reps)}</span>`:''}<button class="hdel" data-del="${k}" data-date="${h.date}" title="Remover">✕</button>${h.notes?`<div class="hnotes">${esc(h.notes)}</div>`:''}</div>`;
+        });
+        histHtml+=`</div>`;
+      }
+
+      const savedToday=hist.some(h=>h.date===today);
+
+      html+=`<div class="exercise ${done?'complete':''}" data-k="${k}">
+        <div class="ex-title">${esc(ex[0])}</div>
+        <div class="meta">${esc(ex[1])} · descanso ${esc(ex[2])}</div>
+        ${prevHtml}
+        ${histHtml}
+        <div class="grid">
+          <div class="field"><label>Carga de hoje</label><input inputmode="decimal" placeholder="Ex.: 22,5 kg" data-save="weight" data-key="${k}" value="${esc(rec.draft.weight)}"></div>
+          <div class="field"><label>Séries / repetições</label><input placeholder="Ex.: 10/10/9/8" data-save="reps" data-key="${k}" value="${esc(rec.draft.reps)}"></div>
+        </div>
+        <div class="field" style="margin-top:8px"><label>Notas</label><textarea placeholder="Ex.: boa execução, subir carga na próxima..." data-save="notes" data-key="${k}">${esc(rec.draft.notes)}</textarea></div>
+        <div class="save-row"><button class="save-btn ${savedToday?'saved':''}" data-record="${k}">${savedToday?'✓ Registrado hoje — atualizar':'💾 Registrar carga de hoje'}</button></div>
+        <label class="done"><input type="checkbox" data-save="done" data-key="${k}" ${done?'checked':''}> Exercício concluído</label>
+      </div>`;
+    });
+    html+=`</section>`;
+  });
+
+  if(d.cardio) html+=`<div class="cardio"><b>Cardio pós-treino:</b> 20 minutos · intensidade leve/moderada</div>`;
+  html+=`<p class="note"><b>Execução:</b> na maior parte das séries, termine com cerca de 1–2 repetições em reserva (RIR 1–2). Ao atingir o topo da faixa de repetições com boa técnica, aumente a carga gradualmente.</p>`;
+  html+=`<div class="actions"><button class="btn primary" id="recordAll">Registrar todo o treino de hoje</button><button class="btn" id="clearDraft">Limpar campos de hoje</button></div>`;
+  html+=`<div class="footer-tools"><button class="tool-btn" id="exportBtn">⬇︎ Exportar backup</button><button class="tool-btn" id="importBtn">⬆︎ Importar backup</button></div>`;
+  html+=`<p class="note">Os dados ficam salvos neste navegador (localStorage). Use <b>Exportar backup</b> de vez em quando para guardar um arquivo — assim você não perde o histórico se limpar o navegador ou trocar de celular.</p>`;
+
+  app.innerHTML=html;
+  bind();
+}
+
+function currentDate(){ const el=document.getElementById('dateInput'); return (el && el.value) ? el.value : todayISO(); }
+
+function recordOne(k){
+  const rec=getRec(state,k);
+  const date=currentDate();
+  const w=(rec.draft.weight||'').trim();
+  const r=(rec.draft.reps||'').trim();
+  const n=(rec.draft.notes||'').trim();
+  if(!w && !r){ toast('Preencha a carga (ou as repetições) antes de registrar.'); return false; }
+  const idx=rec.history.findIndex(h=>h.date===date);
+  const entry={date,weight:w,reps:r,notes:n};
+  if(idx>=0) rec.history[idx]=entry; else rec.history.push(entry);
+  save();
+  return true;
+}
+
+function bind(){
+  // inputs -> draft
+  app.querySelectorAll('[data-save]').forEach(el=>{
+    el.addEventListener('input',e=>{
+      const k=e.target.dataset.key;
+      const field=e.target.dataset.save;
+      const rec=getRec(state,k);
+      if(field==='done'){
+        rec.draft.done=e.target.checked;
+        const box=e.target.closest('.exercise');
+        if(box) box.classList.toggle('complete',e.target.checked);
+      } else {
+        rec.draft[field]=e.target.value;
+      }
+      save();
+    });
+  });
+  // toggle histórico
+  app.querySelectorAll('[data-toggle]').forEach(b=>{
+    b.addEventListener('click',()=>{ const k=b.dataset.toggle; openHist[k]=!openHist[k]; render(); });
+  });
+  // registrar um exercício
+  app.querySelectorAll('[data-record]').forEach(b=>{
+    b.addEventListener('click',()=>{ const k=b.dataset.record; if(recordOne(k)){ openHist[k]=true; toast('Carga registrada!'); render(); } });
+  });
+  // deletar entrada do histórico
+  app.querySelectorAll('[data-del]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const k=b.dataset.del, date=b.dataset.date;
+      const rec=getRec(state,k);
+      rec.history=rec.history.filter(h=>h.date!==date);
+      save(); render();
+    });
+  });
+  const recAll=document.getElementById('recordAll');
+  if(recAll) recAll.addEventListener('click',recordAllToday);
+  const clr=document.getElementById('clearDraft');
+  if(clr) clr.addEventListener('click',clearDraft);
+  const exp=document.getElementById('exportBtn');
+  if(exp) exp.addEventListener('click',exportBackup);
+  const imp=document.getElementById('importBtn');
+  if(imp) imp.addEventListener('click',importBackup);
+}
+
+function recordAllToday(){
+  const d=training[active];
+  let count=0;
+  d.sections.forEach((sec,si)=>{
+    sec[1].forEach((ex,ei)=>{
+      const k=key(active,si,ei);
+      const rec=getRec(state,k);
+      if((rec.draft.weight||'').trim() || (rec.draft.reps||'').trim()){
+        if(recordOne(k)) count++;
+      }
+    });
+  });
+  if(count>0){ toast(count+' exercício(s) registrado(s) para '+fmtShort(currentDate())+'.'); render(); }
+  else toast('Nenhuma carga preenchida para registrar.');
+}
+
+function clearDraft(){
+  const d=training[active];
+  d.sections.forEach((sec,si)=>{
+    sec[1].forEach((ex,ei)=>{
+      const k=key(active,si,ei);
+      const rec=getRec(state,k);
+      rec.draft={weight:'',reps:'',notes:'',done:false};
+    });
+  });
+  save(); render(); toast('Campos de hoje limpos (o histórico foi mantido).');
+}
+
+function exportBackup(){
+  const data=JSON.stringify(state,null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='treino-hipertrofia-backup-'+todayISO()+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast('Backup exportado.');
+}
+
+function importBackup(){
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept='application/json,.json';
+  inp.onchange=()=>{
+    const f=inp.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=()=>{
+      try{
+        const obj=JSON.parse(rd.result);
+        if(!obj || typeof obj!=='object' || !obj.ex) throw new Error('formato');
+        state=obj; if(!state.ex) state.ex={};
+        save(); render(); toast('Backup importado com sucesso.');
+      }catch(e){ toast('Arquivo inválido — não foi possível importar.'); }
+    };
+    rd.readAsText(f);
+  };
+  inp.click();
+}
+
+try{ render(); }catch(err){
+  var m=document.getElementById('app');
+  if(m) m.innerHTML='<div style="padding:16px;color:#b42318;font-size:14px"><b>Erro ao iniciar:</b><br><code style="font-size:12px;white-space:pre-wrap;word-break:break-word">'+String(err&&err.message||err)+'</code></div>';
+}
+</script></body></html>
